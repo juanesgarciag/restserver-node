@@ -1,4 +1,8 @@
 import { response, request } from "express";
+import bcryptjs from 'bcryptjs';
+
+import User from '../models/user.model.schema.js'
+import { isValidEmail } from "../helpers/db-validators.js";
 
 const getUsers = (req = request, res = response) => {
     const {q, nombre = "No name", apikey, page, limit} = req.query;
@@ -13,13 +17,21 @@ const getUsers = (req = request, res = response) => {
   });
 };
 
-const postUsers = (req = request, res = response) => {
-  const { nombre, edad } = req.body;
+const postUsers = async (req = request, res = response) => {
+
+
+  const {name, email, password, role} = req.body;
+  const user = new User({name, email, password, role});
+
+  // Encriptar contraseña
+  const salt = bcryptjs.genSaltSync();
+  user.password = bcryptjs.hashSync( password, salt );
+
+  // Guardar en DB
+  await user.save();
 
   res.json({
-    msg: "post API - postUsers controller",
-    nombre,
-    edad,
+    user
   });
 };
 
