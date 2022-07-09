@@ -1,8 +1,5 @@
 import Role from "../models/role.model.schema.js";
-import User from "../models/role.model.schema.js"
-import { response } from "express";
-
-const res = response;
+import User from "../models/user.model.schema.js"
 
 const isValidRole = async (role = '') => {
     const existRole = await Role.findOne({role});
@@ -11,6 +8,7 @@ const isValidRole = async (role = '') => {
     }
 }
 
+//Valida si el correo ya existe en DB
 const isValidEmail = async ( email = '') => {
     const existEmail = await User.findOne({email});
     if(existEmail){

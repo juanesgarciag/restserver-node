@@ -2,7 +2,6 @@ import { response, request } from "express";
 import bcryptjs from 'bcryptjs';
 
 import User from '../models/user.model.schema.js'
-import { isValidEmail } from "../helpers/db-validators.js";
 
 const getUsers = (req = request, res = response) => {
     const {q, nombre = "No name", apikey, page, limit} = req.query;
@@ -35,12 +34,20 @@ const postUsers = async (req = request, res = response) => {
   });
 };
 
-const putUsers = (req = request, res = response) => {
+const putUsers = async (req = request, res = response) => {
   const {id} = req.params;
+  const {password, google, email, ...rest} = req.body;
+
+  if(password){
+    const salt = bcryptjs.genSaltSync();
+    rest.password = bcryptjs.hashSync( password, salt );
+  }
+
+  const user = await User.findByIdAndUpdate(id, rest);
 
   res.json({
     msg: "put API - putUsers controller",
-    id,
+    user,
   });
 };
 
