@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 const UserSchema = mongoose.Schema({
 
+    _id:String,
     name:{
         type: String,
         required: [true, 'El Nombre es obligatorio']
@@ -36,7 +37,8 @@ const UserSchema = mongoose.Schema({
 
 //Eliminar del objeto usuarios los datos que no queremos traer
 UserSchema.methods.toJSON = function () {
-    const {__v, password, ...user} = this.toObject();
+    const {__v, password, _id, ...user} = this.toObject();
+    user.uid = _id;
     return user;
 };
 

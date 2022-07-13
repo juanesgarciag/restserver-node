@@ -2,12 +2,14 @@ import express from "express";
 import cors from "cors";
 
 import { router } from "../routes/user.routes.js";
+import { auth } from "../routes/auth.routes.js";
 import { dbConnection } from "../database/config.db.js";
 
 class Server {
   constructor() {
     this.expressApp = express();
     this.usersPath = "/api/users";
+    this.loginPath = "/api/auth";
     this.PORT = process.env.PORT;
 
     //Conectar a DB
@@ -20,7 +22,7 @@ class Server {
     this.routes();
   }
 
-  async dbConnect () {
+  async dbConnect() {
     await dbConnection();
   }
 
@@ -30,13 +32,14 @@ class Server {
 
     //lectura y parseo del body
     this.expressApp.use(express.json());
-    
+
     // Directorio publico
     this.expressApp.use(express.static("public"));
   }
 
   routes() {
     this.expressApp.use(this.usersPath, router);
+    this.expressApp.use(this.loginPath, auth);
   }
 
   listen() {
